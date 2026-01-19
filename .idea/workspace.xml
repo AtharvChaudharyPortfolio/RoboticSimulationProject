@@ -1,7 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="877df66d-dad5-4aa7-bff6-bf0824f7ae10" name="Changes" comment="" />
+    <list default="true" id="877df66d-dad5-4aa7-bff6-bf0824f7ae10" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/graphics/RobotImage-1.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/.gitattributes" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/.idea/PythonVoiceAssistant.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/.idea/inspectionProfiles/profiles_settings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/Screenshot.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/assistant.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/assistant.spec" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/data/Screenshot.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/data/base" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/data/transcription.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/data/voiceAudio.wav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/data/whisper/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/data/whisper/__main__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/data/whisper/assets/gpt2.tiktoken" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/data/whisper/assets/mel_filters.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/data/whisper/assets/multilingual.tiktoken" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/data/whisper/audio.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/data/whisper/decoding.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/data/whisper/model.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/data/whisper/normalizers/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/data/whisper/normalizers/basic.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/data/whisper/normalizers/english.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/data/whisper/normalizers/english.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/data/whisper/timing.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/data/whisper/tokenizer.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/data/whisper/transcribe.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/data/whisper/triton_ops.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/data/whisper/utils.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/data/whisper/version.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/voiceAudio.wav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -21,11 +61,22 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Python.main.executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "master"
+    "git-widget-placeholder": "master",
+    "last_opened_file_path": "C:/Users/Athar/PycharmProjects/RoboticSimulationProject/graphics"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Athar\PycharmProjects\RoboticSimulationProject\graphics" />
+      <recent name="C:\Users\Athar\PycharmProjects\RoboticSimulationProject" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Athar\PycharmProjects\RoboticSimulationProject\graphics" />
+    </key>
+  </component>
   <component name="RunManager">
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="RoboticSimulationProject" />
@@ -67,16 +118,5 @@
       <updated>1768777317459</updated>
     </task>
     <servers />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/main.py</url>
-          <line>8</line>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
 </project>
