@@ -14,11 +14,11 @@ class Envir:
         self.width = dimentions[1]
         pygame.display.set_caption("Robotic Simulation")
         self.map = pygame.display.set_mode((self.width, self.height))
-        self.font=pygame.font.Font("graphics/Pixel Game.otf", 50)
-        self.text=self.font.render('default', True, self.white, self.black)
+        self.font=pygame.font.Font("graphics/Pixel Game.otf", 25)
+        self.text=self.font.render('default', True, self.white, None)
         self.textRect=self.text.get_rect()
-        self.textRect.center=(dimentions[1]-1050,
-                              dimentions[0] -100)
+        self.textRect.center=(dimentions[1]-1100,
+                              dimentions[0] -550)
 
     def write_info(self, Vl, Vr, theta):
         txt=f"Left Wheel Vel = {Vl} Right Wheel Vel = {Vr} theta = {int(math.degrees(theta))} degrees"
@@ -36,7 +36,6 @@ class Robot:
         self.maxspeed=0.02*self.m2p
         self.img=pygame.image.load(robotImg)
         self.rotated=self.img
-        self.friction = 0.98
         self.rect=self.rotated.get_rect(center=(self.x,self.y))
     def draw(self,map):
         map.blit(self.rotated, self.rect)
