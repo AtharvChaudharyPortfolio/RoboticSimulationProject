@@ -1,6 +1,9 @@
 import pygame
 import math
 
+
+wallColor = (0, 180, 125)
+wall_list = pygame.sprite.Group()
 class Envir:
     def __init__(self,dimentions):
         self.black = (0,0,0)
@@ -24,6 +27,8 @@ class Envir:
         txt=f"Left Wheel Vel = {Vl} Right Wheel Vel = {Vr} theta = {int(math.degrees(theta))} degrees"
         self.text=self.font.render(txt, True, self.black, self.gray)
         self.map.blit(self.text, self.textRect)
+
+
 class Robot:
     def __init__(self, startpos, robotImg, width):
         self.m2p=3779.52 #meters to pixel conversion
@@ -70,6 +75,7 @@ start=(200,200)
 
 dims=(600,1200)
 
+
 running = True
 
 environment=Envir(dims)
@@ -77,6 +83,8 @@ environment=Envir(dims)
 robot = Robot(start, r"C:\Users\Athar\PycharmProjects\RoboticSimulationProject\graphics\RobotImage-1.png",
             0.01*3779.52)
 dt =0
+v = 0
+robot_radius = 20
 lasttime = pygame.time.get_ticks()
 while running:
     for event in pygame.event.get():
