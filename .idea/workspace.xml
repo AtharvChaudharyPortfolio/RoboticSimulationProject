@@ -5,7 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="877df66d-dad5-4aa7-bff6-bf0824f7ae10" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/graphics/RobotImage-1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/graphics/Pixel Game.otf" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/.gitattributes" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/.idea/.gitignore" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/.idea/PythonVoiceAssistant.iml" beforeDir="false" />
@@ -50,24 +50,24 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 4
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 4
+}</component>
   <component name="ProjectId" id="38Rzkwrv5ZKulZERbrhGW0xAF2q" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Python.main.executor": "Run",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "master",
-    "last_opened_file_path": "C:/Users/Athar/PycharmProjects/RoboticSimulationProject/graphics"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Athar/PycharmProjects/RoboticSimulationProject/graphics&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\Athar\PycharmProjects\RoboticSimulationProject\graphics" />
