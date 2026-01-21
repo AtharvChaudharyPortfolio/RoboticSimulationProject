@@ -55,7 +55,9 @@ class Robot:
                     self.vr += 0.001*self.m2p
                 elif event.key == pygame.K_KP3:
                     self.vr -= 0.001*self.m2p
-
+                elif event.key == pygame.K_KP8:
+                    self.vr = abs(self.vr + self.vl)/2
+                    self.vl = self.vr
         if abs(self.vl) < 0.1: self.vl =0
         if abs(self.vr) < 0.1: self.vr =0
 
@@ -74,7 +76,6 @@ pygame.init()
 start=(200,200)
 
 dims=(600,1200)
-
 
 running = True
 
