@@ -2,8 +2,9 @@ import pygame
 import math
 
 
-wallColor = (0, 180, 125)
 wall_list = pygame.sprite.Group()
+radius = 20
+wheelDist = 40
 class Envir:
     def __init__(self,dimentions):
         self.black = (0,0,0)
@@ -18,15 +19,29 @@ class Envir:
         pygame.display.set_caption("Robotic Simulation")
         self.map = pygame.display.set_mode((self.width, self.height))
         self.font=pygame.font.Font("graphics/Pixel Game.otf", 25)
-        self.text=self.font.render('default', True, self.white, None)
+        self.text=self.font.render('default', True, self.white)
         self.textRect=self.text.get_rect()
-        self.textRect.center=(dimentions[1]-1100,
-                              dimentions[0] -550)
+        self.textRect.center=(dimentions[1]-1150,
+                              dimentions[0] -585)
+        self.endSimText = self.font.render('default', True, self.white)
+        self.endSimRect = self.endSimText.get_rect()
+        self.endSimRect.center = (600, 300)
 
     def write_info(self, Vl, Vr, theta):
         txt=f"Left Wheel Vel = {Vl} Right Wheel Vel = {Vr} theta = {int(math.degrees(theta))} degrees"
-        self.text=self.font.render(txt, True, self.black, self.gray)
+        self.text=self.font.render(txt, True, self.black)
         self.map.blit(self.text, self.textRect)
+    def gameOver(self):
+        gameOver="Simulation failed: Robot Crashed - quitting application"
+        self.endsimText=self.font.render(gameOver, True, self.black, self.white)
+        self.map.blit(self.endsimText, self.endSimRect)
+
+class Wall(pygame.sprite.Sprite):
+    def __init__(self, x, y, width, height):
+        super().__init__()
+        self.image = pygame.Surface((width, height))
+        self.image.fill((0,125,125))
+        self.rect = (x,y,width,height)
 
 
 class Robot:
@@ -56,7 +71,7 @@ class Robot:
                 elif event.key == pygame.K_KP3:
                     self.vr -= 0.001*self.m2p
                 elif event.key == pygame.K_KP8:
-                    self.vr = abs(self.vr + self.vl)/2
+                    self.vr = (self.vr + self.vl)/2
                     self.vl = self.vr
         if abs(self.vl) < 0.1: self.vl =0
         if abs(self.vr) < 0.1: self.vr =0
@@ -79,6 +94,15 @@ dims=(600,1200)
 
 running = True
 
+top = Wall(0, 0 , 1200 ,40)
+bottom = Wall(0, 565, 1200,40)
+left = Wall(0, 0, 40, 600)
+right = Wall(1165, 0, 40, 600)
+wall_list.add(right)
+wall_list.add(left)
+wall_list.add(bottom)
+wall_list.add(top)
+
 environment=Envir(dims)
 
 robot = Robot(start, r"C:\Users\Athar\PycharmProjects\RoboticSimulationProject\graphics\RobotImage-1.png",
@@ -93,11 +117,33 @@ while running:
             running = False
         robot.move(event)
     dt=(pygame.time.get_ticks()-lasttime)/1000
+    v = (robot.vl + robot.vr)/2
+    omega = (robot.vr - robot.vl)/wheelDist
+    theta_prediction = robot.theta + omega*dt
+    x_pred = robot.x + v *math.cos(theta_prediction) *dt
+    y_pred = robot.y + v*math.sin(theta_prediction)*dt
+    collision_rect = pygame.Rect(0,0, radius*2, radius*2)
+    collision_rect.center = (x_pred,y_pred)
+    hits = pygame.sprite.spritecollide(
+        robot,
+        wall_list,
+        False,
+        collided=lambda s1, s2: collision_rect.colliderect(s2.rect)
+    )
+    if hits:
+        robot.vr =0
+        robot.vl = 0
+        environment.gameOver()
+        pygame.display.update()
+        pygame.time.delay(1000)
+        running = False
+    else:
+        robot.move()
     lasttime = pygame.time.get_ticks()
     pygame.display.update()
     environment.map.fill(environment.gray)
-    robot.move()
     robot.draw(environment.map)
+    wall_list.draw(environment.map)
     environment.write_info(int(robot.vl),
                            int(robot.vr),
                            robot.theta)
