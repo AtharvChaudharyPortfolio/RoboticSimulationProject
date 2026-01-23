@@ -92,8 +92,8 @@ class Robot:
             if pygame.time.get_ticks()%200 == 0:
                 self.vr += vr_mult*(0.001*self.m2p)
                 self.vl += vl_mult*(0.001*self.m2p)
-                self.vr = max(abs(self.vr), 0)
-                self.vl = max(abs(self.vl), 0)
+                self.vr = max(self.vr, 0)
+                self.vl = max(self.vl, 0)
             if self.vr == 0 and self.vl == 0:
                 self.braking = False
         if abs(self.vl)>  self.maxspeed:
