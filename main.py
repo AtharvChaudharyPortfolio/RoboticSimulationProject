@@ -3,7 +3,7 @@ import math
 
 
 wall_list = pygame.sprite.Group()
-radius = 20
+radius = 28
 wheelDist = 40
 class Envir:
     def __init__(self,dimentions):
@@ -32,7 +32,7 @@ class Envir:
         self.text=self.font.render(txt, True, self.black)
         self.map.blit(self.text, self.textRect)
     def gameOver(self):
-        gameOver="Simulation failed: Robot Crashed - quitting application"
+        gameOver="Attempt failed: Robot Crashed - resetting position"
         self.endsimText=self.font.render(gameOver, True, self.black, self.white)
         self.map.blit(self.endsimText, self.endSimRect)
 
@@ -42,6 +42,7 @@ class Wall(pygame.sprite.Sprite):
         self.image = pygame.Surface((width, height))
         self.image.fill((0,125,125))
         self.rect = (x,y,width,height)
+        wall_list.add(self)
 
 
 class Robot:
@@ -57,8 +58,16 @@ class Robot:
         self.img=pygame.image.load(robotImg)
         self.rotated=self.img
         self.rect=self.rotated.get_rect(center=(self.x,self.y))
+        self.braking = False
     def draw(self,map):
         map.blit(self.rotated, self.rect)
+    def revert(self, start):
+        self.x = start[0]
+        self.y = start[1]
+        self.vl = 0.01*self.m2p
+        self.vr = 0.01*self.m2p
+        self.theta =0
+
     def move(self,event=None):
         if event is not None:
             if event.type == pygame.KEYDOWN:
@@ -73,9 +82,20 @@ class Robot:
                 elif event.key == pygame.K_KP8:
                     self.vr = (self.vr + self.vl)/2
                     self.vl = self.vr
+                elif event.key == pygame.K_KP2:
+                    self.braking = True
         if abs(self.vl) < 0.1: self.vl =0
         if abs(self.vr) < 0.1: self.vr =0
-
+        if self.braking:
+            vr_mult = 1 if self.vr <0 else -1
+            vl_mult = 1 if self.vl <0 else -1
+            if pygame.time.get_ticks()%200 == 0:
+                self.vr += vr_mult*(0.001*self.m2p)
+                self.vl += vl_mult*(0.001*self.m2p)
+                self.vr = max(abs(self.vr), 0)
+                self.vl = max(abs(self.vl), 0)
+            if self.vr == 0 and self.vl == 0:
+                self.braking = False
         if abs(self.vl)>  self.maxspeed:
             self.vl = self.maxspeed if self.vl>0 else -self.maxspeed
         if abs(self.vr)>  self.maxspeed:
@@ -88,7 +108,7 @@ class Robot:
         self.rect = self.rotated.get_rect(center=(self.x,self.y))
 pygame.init()
 
-start=(200,200)
+start=(100,100)
 
 dims=(600,1200)
 
@@ -98,10 +118,10 @@ top = Wall(0, 0 , 1200 ,40)
 bottom = Wall(0, 565, 1200,40)
 left = Wall(0, 0, 40, 600)
 right = Wall(1165, 0, 40, 600)
-wall_list.add(right)
-wall_list.add(left)
-wall_list.add(bottom)
-wall_list.add(top)
+maze1 = Wall(0, 200, 500, 40)
+maze2 = Wall(700, 0, 40, 600)
+maze3 = Wall(500, 200, 40, 240)
+maze4 = Wall(0, 400, 350, 40)
 
 environment=Envir(dims)
 
@@ -136,7 +156,7 @@ while running:
         environment.gameOver()
         pygame.display.update()
         pygame.time.delay(1000)
-        running = False
+        robot.revert(start)
     else:
         robot.move()
     lasttime = pygame.time.get_ticks()
