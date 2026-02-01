@@ -41,7 +41,7 @@ class Wall(pygame.sprite.Sprite):
         super().__init__()
         self.image = pygame.Surface((width, height))
         self.image.fill((0,125,125))
-        self.rect = (x,y,width,height)
+        self.rect = pygame.Rect(x,y,width,height)
         wall_list.add(self)
 
 
@@ -59,15 +59,60 @@ class Robot:
         self.rotated=self.img
         self.rect=self.rotated.get_rect(center=(self.x,self.y))
         self.braking = False
+        self.green = (0,255,0)
+        self.pos = (self.x, self.y)
+        self.dx = 0
+        self.dy = 0
+        self.l_dx = 0
+        self.l_dy = 0
+        self.r_dy = 0
+        self.r_dx = 0
+        self.tail = (0,0)
     def draw(self,map):
         map.blit(self.rotated, self.rect)
     def revert(self, start):
+        self.braking = False
         self.x = start[0]
         self.y = start[1]
         self.vl = 0.01*self.m2p
         self.vr = 0.01*self.m2p
-        self.theta =0
+        self.theta = 0
 
+    def trajectory(self, surface):
+            v = (self.vr + self.vl)/2
+            pred_time = 2.0
+            self.dx = v * math.cos(self.theta) *pred_time
+            self.dy = -v * math.sin(self.theta) * pred_time
+            self.l_dx = v * math.cos(self.theta+(math.pi/2)) * pred_time
+            self.l_dy = -v * math.sin(self.theta+(math.pi/2)) * pred_time
+            self.r_dx = v * math.cos(self.theta-(math.pi/2)) * pred_time
+            self.r_dy = -v * math.sin(self.theta-(math.pi/2)) * pred_time
+            self.tail = robot.rect.center
+            forward_head = (self.tail[0] + self.dx, self.tail[1] + self.dy)
+            left_head = (self.tail[0] + self.l_dx, self.tail[1] + self.l_dy)
+            right_head = (self.tail[0] + self.r_dx, self.tail[1] + self.r_dy)
+            pygame.draw.line(surface, self.green, self.tail, forward_head, 3)
+            pygame.draw.line(surface, (255,0,0), self.tail, left_head, 3)
+            pygame.draw.line(surface, (0,0,255), self.tail, right_head, 3)
+            #self.collision_pred(l_dx, l_dy, r_dx, r_dy, dx, dy)
+
+    def moveFwd(self):
+        if pygame.time.get_ticks() % 2000 == 0:
+            self.vl +=0.001*self.m2p
+            self.vr +=0.001*self.m2p
+        self.move()
+    def equalizeDrive(self):
+        self.vr = (self.vr + self.vl) / 2
+        self.vl = self.vr
+        self.move()
+    def turnLeft(self):
+        if pygame.time.get_ticks() % 2000 == 0:
+            self.vr +=0.01*self.m2p
+        self.move()
+    def turnRight(self):
+        if pygame.time.get_ticks() % 2000 == 0:
+            self.vl +=0.01*self.m2p
+        self.move()
     def move(self,event=None):
         if event is not None:
             if event.type == pygame.KEYDOWN:
@@ -106,9 +151,10 @@ class Robot:
         self.theta += (self.vr -self.vl)/self.w*dt
         self.rotated =pygame.transform.rotozoom(self.img, math.degrees(self.theta),1)
         self.rect = self.rotated.get_rect(center=(self.x,self.y))
+        self.pos = (self.x, self.y)
 pygame.init()
 
-start=(100,100)
+start=(100,120)
 
 dims=(600,1200)
 
@@ -144,6 +190,17 @@ while running:
     y_pred = robot.y + v*math.sin(theta_prediction)*dt
     collision_rect = pygame.Rect(0,0, radius*2, radius*2)
     collision_rect.center = (x_pred,y_pred)
+    robot.trajectory(environment.map)
+    for wall in wall_list:
+        if wall.rect.collidepoint(robot.dx + robot.tail[0], robot.dy + robot.tail[1]):
+            print("obstacle ahead")
+        if wall.rect.collidepoint(robot.l_dx + robot.tail[0], robot.l_dy + robot.tail[1]):
+            print("obstacle on the left")
+        if wall.rect.collidepoint(robot.r_dx + robot.tail[0], robot.r_dy + robot.tail[1]):
+            print("obstacle on the right")
+
+
+
     hits = pygame.sprite.spritecollide(
         robot,
         wall_list,
