@@ -59,15 +59,13 @@ class Robot:
         self.rotated=self.img
         self.rect=self.rotated.get_rect(center=(self.x,self.y))
         self.braking = False
+        self.stopped = False
         self.green = (0,255,0)
         self.pos = (self.x, self.y)
-        self.dx = 0
-        self.dy = 0
-        self.l_dx = 0
-        self.l_dy = 0
-        self.r_dy = 0
-        self.r_dx = 0
-        self.tail = (0,0)
+        self.forward_head = pygame.Vector2(0,0)
+        self.left_head = pygame.Vector2(0,0)
+        self.right_head = pygame.Vector2(0,0)
+
     def draw(self,map):
         map.blit(self.rotated, self.rect)
     def revert(self, start):
@@ -77,24 +75,29 @@ class Robot:
         self.vl = 0.01*self.m2p
         self.vr = 0.01*self.m2p
         self.theta = 0
-
     def trajectory(self, surface):
-            v = (self.vr + self.vl)/2
-            pred_time = 2.0
-            self.dx = v * math.cos(self.theta) *pred_time
-            self.dy = -v * math.sin(self.theta) * pred_time
-            self.l_dx = v * math.cos(self.theta+(math.pi/2)) * pred_time
-            self.l_dy = -v * math.sin(self.theta+(math.pi/2)) * pred_time
-            self.r_dx = v * math.cos(self.theta-(math.pi/2)) * pred_time
-            self.r_dy = -v * math.sin(self.theta-(math.pi/2)) * pred_time
-            self.tail = robot.rect.center
-            forward_head = (self.tail[0] + self.dx, self.tail[1] + self.dy)
-            left_head = (self.tail[0] + self.l_dx, self.tail[1] + self.l_dy)
-            right_head = (self.tail[0] + self.r_dx, self.tail[1] + self.r_dy)
-            pygame.draw.line(surface, self.green, self.tail, forward_head, 3)
-            pygame.draw.line(surface, (255,0,0), self.tail, left_head, 3)
-            pygame.draw.line(surface, (0,0,255), self.tail, right_head, 3)
-            #self.collision_pred(l_dx, l_dy, r_dx, r_dy, dx, dy)
+        v = (self.vl+self.vr)/2
+        look_ahead_time = 2.0
+        forward = pygame.Vector2(math.cos(self.theta), -math.sin(self.theta))
+        origin = pygame.Vector2(self.rect.center)
+        head = origin + forward*v*look_ahead_time
+        pygame.draw.line(surface, (0,0,0), origin, head, 3)
+    def raycast(self, surface):
+            pred_len = 100.0
+            forward = pygame.Vector2(math.cos(self.theta), -math.sin(self.theta))
+            right = forward.rotate_rad(-math.pi/2)
+            left = forward.rotate_rad(math.pi/2)
+            origin = pygame.Vector2(self.rect.center)
+            origin += forward*12
+            left_origin = origin - right*8
+            right_origin = origin+right*8
+
+            self.forward_head = origin + forward*pred_len
+            self.left_head = left_origin + left *pred_len
+            self.right_head = right_origin + right*pred_len
+            pygame.draw.line(surface, (0,225,0), origin, self.forward_head, 3)
+            pygame.draw.line(surface, (255,0,0), left_origin, self.left_head, 3)
+            pygame.draw.line(surface, (0,0,255), right_origin, self.right_head, 3)
 
     def moveFwd(self):
         if pygame.time.get_ticks() % 2000 == 0:
@@ -132,8 +135,8 @@ class Robot:
         if abs(self.vl) < 0.1: self.vl =0
         if abs(self.vr) < 0.1: self.vr =0
         if self.braking:
-            vr_mult = 1 if self.vr <0 else -1
-            vl_mult = 1 if self.vl <0 else -1
+            vr_mult = 2 if self.vr <0 else -2
+            vl_mult = 2 if self.vl <0 else -2
             if pygame.time.get_ticks()%200 == 0:
                 self.vr += vr_mult*(0.001*self.m2p)
                 self.vl += vl_mult*(0.001*self.m2p)
@@ -141,6 +144,7 @@ class Robot:
                 self.vl = max(self.vl, 0)
             if self.vr == 0 and self.vl == 0:
                 self.braking = False
+                self.stopped = True
         if abs(self.vl)>  self.maxspeed:
             self.vl = self.maxspeed if self.vl>0 else -self.maxspeed
         if abs(self.vr)>  self.maxspeed:
@@ -190,16 +194,21 @@ while running:
     y_pred = robot.y + v*math.sin(theta_prediction)*dt
     collision_rect = pygame.Rect(0,0, radius*2, radius*2)
     collision_rect.center = (x_pred,y_pred)
+    robot.raycast(environment.map)
     robot.trajectory(environment.map)
     for wall in wall_list:
-        if wall.rect.collidepoint(robot.dx + robot.tail[0], robot.dy + robot.tail[1]):
+        if wall.rect.collidepoint(robot.forward_head) and not robot.stopped:
             print("obstacle ahead")
-        if wall.rect.collidepoint(robot.l_dx + robot.tail[0], robot.l_dy + robot.tail[1]):
-            print("obstacle on the left")
-        if wall.rect.collidepoint(robot.r_dx + robot.tail[0], robot.r_dy + robot.tail[1]):
-            print("obstacle on the right")
-
-
+            robot.braking = True
+        if not wall.rect.collidepoint(robot.left_head) and robot.stopped:
+            print("turning left")
+            robot.turnLeft()
+        if not wall.rect.collidepoint(robot.right_head) and robot.stopped:
+            print("turning right")
+            robot.turnRight()
+        else:
+            robot.stopped = False
+            robot.equalizeDrive()
 
     hits = pygame.sprite.spritecollide(
         robot,
