@@ -59,13 +59,15 @@ class Robot:
         self.rotated=self.img
         self.rect=self.rotated.get_rect(center=(self.x,self.y))
         self.braking = False
-        self.stopped = False
-        self.green = (0,255,0)
         self.pos = (self.x, self.y)
         self.forward_head = pygame.Vector2(0,0)
         self.left_head = pygame.Vector2(0,0)
         self.right_head = pygame.Vector2(0,0)
-
+        self.detected = False
+        self.turnTimer = 0.3
+        self.was_left = False
+        self.was_right = False
+        self.mode = 0
     def draw(self,map):
         map.blit(self.rotated, self.rect)
     def revert(self, start):
@@ -92,46 +94,29 @@ class Robot:
             left_origin = origin - right*8
             right_origin = origin+right*8
 
-            self.forward_head = origin + forward*pred_len
+            self.forward_head = origin + forward*pred_len*1.3
             self.left_head = left_origin + left *pred_len
             self.right_head = right_origin + right*pred_len
             pygame.draw.line(surface, (0,225,0), origin, self.forward_head, 3)
             pygame.draw.line(surface, (255,0,0), left_origin, self.left_head, 3)
             pygame.draw.line(surface, (0,0,255), right_origin, self.right_head, 3)
+    def move(self):
+        if self.mode == 1:
+            self.vl = 0.02*self.m2p
+            self.vr = -0.02*self.m2p
+            self.turnTimer -= dt
+            if self.turnTimer<=0:
+                self.mode = 0
+        elif self.mode == -1:
+            self.vl = -0.02*self.m2p
+            self.vr = 0.02*self.m2p
+            self.turnTimer -= dt
+            if self.turnTimer <=0:
+                self.mode = 0
+        else:
+            self.vl = 0.01*self.m2p
+            self.vr = 0.01*self.m2p
 
-    def moveFwd(self):
-        if pygame.time.get_ticks() % 2000 == 0:
-            self.vl +=0.001*self.m2p
-            self.vr +=0.001*self.m2p
-        self.move()
-    def equalizeDrive(self):
-        self.vr = (self.vr + self.vl) / 2
-        self.vl = self.vr
-        self.move()
-    def turnLeft(self):
-        if pygame.time.get_ticks() % 2000 == 0:
-            self.vr +=0.01*self.m2p
-        self.move()
-    def turnRight(self):
-        if pygame.time.get_ticks() % 2000 == 0:
-            self.vl +=0.01*self.m2p
-        self.move()
-    def move(self,event=None):
-        if event is not None:
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_KP4:
-                    self.vl +=0.001*self.m2p
-                elif event.key == pygame.K_KP1:
-                    self.vl -= 0.001*self.m2p
-                elif event.key == pygame.K_KP6:
-                    self.vr += 0.001*self.m2p
-                elif event.key == pygame.K_KP3:
-                    self.vr -= 0.001*self.m2p
-                elif event.key == pygame.K_KP8:
-                    self.vr = (self.vr + self.vl)/2
-                    self.vl = self.vr
-                elif event.key == pygame.K_KP2:
-                    self.braking = True
         if abs(self.vl) < 0.1: self.vl =0
         if abs(self.vr) < 0.1: self.vr =0
         if self.braking:
@@ -144,12 +129,10 @@ class Robot:
                 self.vl = max(self.vl, 0)
             if self.vr == 0 and self.vl == 0:
                 self.braking = False
-                self.stopped = True
         if abs(self.vl)>  self.maxspeed:
             self.vl = self.maxspeed if self.vl>0 else -self.maxspeed
         if abs(self.vr)>  self.maxspeed:
             self.vr = self.maxspeed if self.vr>0 else -self.maxspeed
-
         self.x += ((self.vl+self.vr)/2)*math.cos(self.theta)*dt
         self.y -= ((self.vl+self.vr)/2)*math.sin(self.theta)*dt
         self.theta += (self.vr -self.vl)/self.w*dt
@@ -185,7 +168,6 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        robot.move(event)
     dt=(pygame.time.get_ticks()-lasttime)/1000
     v = (robot.vl + robot.vr)/2
     omega = (robot.vr - robot.vl)/wheelDist
@@ -196,20 +178,44 @@ while running:
     collision_rect.center = (x_pred,y_pred)
     robot.raycast(environment.map)
     robot.trajectory(environment.map)
-    for wall in wall_list:
-        if wall.rect.collidepoint(robot.forward_head) and not robot.stopped:
-            print("obstacle ahead")
-            robot.braking = True
-        if not wall.rect.collidepoint(robot.left_head) and robot.stopped:
-            print("turning left")
-            robot.turnLeft()
-        if not wall.rect.collidepoint(robot.right_head) and robot.stopped:
-            print("turning right")
-            robot.turnRight()
-        else:
-            robot.stopped = False
-            robot.equalizeDrive()
 
+    obstacles = pygame.sprite.spritecollide(
+        robot,
+        wall_list,
+        False,
+        collided=lambda s1, s2:s2.rect.collidepoint(s1.forward_head)
+    )
+    if obstacles:
+        left = pygame.sprite.spritecollide(
+            robot,
+            wall_list,
+            False,
+            collided=lambda s1, s2: s2.rect.collidepoint(s1.left_head)
+        )
+        left_ob = None
+        right_ob = None
+        for wall in left:
+            left_ob = wall
+        right = pygame.sprite.spritecollide(
+            robot,
+            wall_list,
+            False,
+            collided=lambda s1, s2: s2.rect.collidepoint(s1.right_head)
+        )
+        for wall in right:
+            right_ob = wall
+        if not left and not robot.was_left:
+            robot.mode = 1
+            print("left")
+        elif not right and not robot.was_right:
+            robot.mode = -1
+            print("right")
+        else:
+            robot.mode = 0
+            robot.was_left = False
+            robot.was_right = False
+        robot.was_right = right
+        robot.was_left = left
     hits = pygame.sprite.spritecollide(
         robot,
         wall_list,
