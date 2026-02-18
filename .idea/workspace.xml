@@ -5,41 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="877df66d-dad5-4aa7-bff6-bf0824f7ae10" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/.gitattributes" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/.idea/PythonVoiceAssistant.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/.idea/inspectionProfiles/profiles_settings.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/Screenshot.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/assistant.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/assistant.spec" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/data/Screenshot.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/data/base" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/data/transcription.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/data/voiceAudio.wav" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/data/whisper/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/data/whisper/__main__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/data/whisper/assets/gpt2.tiktoken" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/data/whisper/assets/mel_filters.npz" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/data/whisper/assets/multilingual.tiktoken" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/data/whisper/audio.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/data/whisper/decoding.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/data/whisper/model.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/data/whisper/normalizers/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/data/whisper/normalizers/basic.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/data/whisper/normalizers/english.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/data/whisper/normalizers/english.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/data/whisper/timing.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/data/whisper/tokenizer.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/data/whisper/transcribe.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/data/whisper/triton_ops.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/data/whisper/utils.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/data/whisper/version.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../PythonVoiceAssistant/voiceAudio.wav" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../taskManager/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/../taskManager/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -64,7 +32,7 @@
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Athar/PycharmProjects/RoboticSimulationProject/graphics&quot;
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Athar/PycharmProjects/taskManager&quot;
   }
 }</component>
   <component name="RecentsManager">
