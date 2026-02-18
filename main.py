@@ -63,6 +63,9 @@ class Robot:
         self.forward_head = pygame.Vector2(0,0)
         self.left_head = pygame.Vector2(0,0)
         self.right_head = pygame.Vector2(0,0)
+        self.origin = pygame.Vector2(0,0)
+        self.left_origin = pygame.Vector2(0,0)
+        self.right_origin = pygame.Vector2(0,0)
         self.detected = False
         self.turnTimer = 0.3
         self.was_left = False
@@ -81,37 +84,37 @@ class Robot:
         v = (self.vl+self.vr)/2
         look_ahead_time = 2.0
         forward = pygame.Vector2(math.cos(self.theta), -math.sin(self.theta))
-        origin = pygame.Vector2(self.rect.center)
-        head = origin + forward*v*look_ahead_time
-        pygame.draw.line(surface, (0,0,0), origin, head, 3)
+        t_origin = pygame.Vector2(self.rect.center)
+        head = t_origin + forward*v*look_ahead_time
+        pygame.draw.line(surface, (0,0,0), t_origin, head, 3)
     def raycast(self, surface):
             pred_len = 100.0
             forward = pygame.Vector2(math.cos(self.theta), -math.sin(self.theta))
             right = forward.rotate_rad(-math.pi/2)
             left = forward.rotate_rad(math.pi/2)
-            origin = pygame.Vector2(self.rect.center)
-            origin += forward*12
-            left_origin = origin - right*8
-            right_origin = origin+right*8
+            self.origin = pygame.Vector2(self.rect.center)
+            self.origin += forward*12
+            self.left_origin = self.origin - right*8
+            self.right_origin = self.origin+right*8
 
-            self.forward_head = origin + forward*pred_len*1.3
-            self.left_head = left_origin + left *pred_len
-            self.right_head = right_origin + right*pred_len
-            pygame.draw.line(surface, (0,225,0), origin, self.forward_head, 3)
-            pygame.draw.line(surface, (255,0,0), left_origin, self.left_head, 3)
-            pygame.draw.line(surface, (0,0,255), right_origin, self.right_head, 3)
+            self.forward_head = self.origin + forward*pred_len
+            self.left_head = self.left_origin + left *pred_len
+            self.right_head = self.right_origin + right*pred_len
+            pygame.draw.line(surface, (0,225,0), self.origin, self.forward_head, 3)
+            pygame.draw.line(surface, (255,0,0), self.left_origin, self.left_head, 3)
+            pygame.draw.line(surface, (0,0,255), self.right_origin, self.right_head, 3)
     def move(self):
-        if self.mode == 1:
+        if self.mode > 0:
             self.vl = 0.02*self.m2p
             self.vr = -0.02*self.m2p
             self.turnTimer -= dt
-            if self.turnTimer<=0:
+            if self.turnTimer <= 0:
                 self.mode = 0
-        elif self.mode == -1:
+        elif self.mode < 0:
             self.vl = -0.02*self.m2p
             self.vr = 0.02*self.m2p
             self.turnTimer -= dt
-            if self.turnTimer <=0:
+            if self.turnTimer <= 0:
                 self.mode = 0
         else:
             self.vl = 0.01*self.m2p
@@ -179,43 +182,52 @@ while running:
     robot.raycast(environment.map)
     robot.trajectory(environment.map)
 
-    obstacles = pygame.sprite.spritecollide(
+
+    left = pygame.sprite.spritecollide(
         robot,
         wall_list,
         False,
-        collided=lambda s1, s2:s2.rect.collidepoint(s1.forward_head)
+        collided=lambda s1, s2: s2.rect.clipline(s1.left_origin, s1.left_head)
     )
-    if obstacles:
-        left = pygame.sprite.spritecollide(
-            robot,
-            wall_list,
-            False,
-            collided=lambda s1, s2: s2.rect.collidepoint(s1.left_head)
-        )
-        left_ob = None
-        right_ob = None
-        for wall in left:
-            left_ob = wall
-        right = pygame.sprite.spritecollide(
-            robot,
-            wall_list,
-            False,
-            collided=lambda s1, s2: s2.rect.collidepoint(s1.right_head)
-        )
-        for wall in right:
-            right_ob = wall
-        if not left and not robot.was_left:
-            robot.mode = 1
-            print("left")
-        elif not right and not robot.was_right:
-            robot.mode = -1
-            print("right")
-        else:
-            robot.mode = 0
-            robot.was_left = False
-            robot.was_right = False
-        robot.was_right = right
-        robot.was_left = left
+    left_dist = None
+    right_dist = None
+    for wall in left:
+        hit = wall.rect.clipline(robot.left_origin, robot.left_head)
+        if hit:
+            entry = pygame.Vector2(hit[0], hit[1])
+            dist = entry.distance_to(robot.left_origin)
+
+            if left_dist is None or dist < left_dist:
+                left_dist = dist
+    right = pygame.sprite.spritecollide(
+        robot,
+        wall_list,
+        False,
+        collided=lambda s1, s2: s2.rect.clipline(s1.right_origin, s1.right_head)
+    )
+    for wall in right:
+        hit = wall.rect.clipline(robot.right_origin, robot.right_head)
+        if hit:
+            entry = pygame.Vector2(hit[0], hit[1])
+            dist = entry.distance_to(robot.right_origin)
+            if right_dist is None or dist < right_dist:
+                right_dist = dist
+    ray_length_L = (robot.left_head - robot.left_origin).length()
+    ray_length_R = (robot.right_head - robot.right_origin).length()
+    distFromR = ray_length_R
+    distFromL = ray_length_L
+    if left_dist is not None:
+        distFromL = left_dist
+    if right_dist is not None:
+        distFromR = right_dist
+    print(str(distFromL) + " " + str(distFromR))
+    robot.mode = (-(distFromL/ray_length_L) +
+                      (distFromR/ray_length_R))
+    robot.mode = max(-1, min(1,robot.mode))
+    print(str(robot.mode))
+    robot.was_right = bool(right)
+    robot.was_left = bool(left)
+
     hits = pygame.sprite.spritecollide(
         robot,
         wall_list,
@@ -223,6 +235,7 @@ while running:
         collided=lambda s1, s2: collision_rect.colliderect(s2.rect)
     )
     if hits:
+        print(str(robot.mode))
         robot.vr =0
         robot.vl = 0
         environment.gameOver()
