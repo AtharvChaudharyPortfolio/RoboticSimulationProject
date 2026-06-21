@@ -3,7 +3,6 @@ import math
 from SceneRandomization import Environment
 import numpy as np
 
-
 class Robot:
     def __init__(self, startpos, width):
         self.m2p=3779.52 #meters to pixel conversion
@@ -14,7 +13,7 @@ class Robot:
         self.vl=0.01*self.m2p #left velocity
         self.vr=0.01*self.m2p #right velocity
         self.maxspeed=0.02*self.m2p
-        self.rect=self.rotated.get_rect(center=(self.x,self.y))
+        self.rect=pygame(center=(self.x,self.y))
         self.pos = (self.x, self.y)
 
     def trajectory(self, look_ahead_time=2.0):
@@ -37,6 +36,4 @@ class Robot:
     def apply_action(self, action):
         self.vl = np.clip(action[0], -1, 1) * self.maxspeed
         self.vr = np.clip(action[1], -1, 1) * self.maxspeed
-
-
 
