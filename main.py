@@ -1,42 +1,23 @@
 import pygame
-import math
 from SceneRandomization import Environment
-import numpy as np
+from Renderer import Renderer
 
+env = Environment(rows=30, cols=30, start=(5,1), end=(12,25), cell_size=35)
+renderer = Renderer(env)
+obs = env.reset()
 
-class Robot:
-    def __init__(self, startpos, width):
-        self.m2p=3779.52 #meters to pixel conversion
-        self.w=width
-        self.x=startpos[0]
-        self.y=startpos[1]
-        self.theta = 0
-        self.vl=0.01*self.m2p #left velocity
-        self.vr=0.01*self.m2p #right velocity
-        self.maxspeed=0.02*self.m2p
-        self.rect=self.rotated.get_rect(center=(self.x,self.y))
-        self.pos = (self.x, self.y)
+running = True
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
 
-    def trajectory(self, look_ahead_time=2.0):
-        v = (self.vl+self.vr)/2
-        forward = pygame.Vector2(math.cos(self.theta), -math.sin(self.theta))
-        t_origin = pygame.Vector2(self.x, self.y)
-        return t_origin + forward*v*look_ahead_time
-    def update(self, dt):
-        self.vl = max(min(self.vl, self.maxspeed), -self.maxspeed)
-        self.vr = max(min(self.vr, self.maxspeed), -self.maxspeed)
+    action = [0, 0]  # placeholder until your policy is wired up
+    obs, reward, done, _ = env.step(action)
+    renderer.draw(env)
+    renderer.clock.tick(60)
 
-        v = (self.vl + self.vr) / 2
-        omega = (self.vr - self.vl) / self.w
+    if done:
+        obs = env.reset()
 
-        self.x += v * math.cos(self.theta) * dt
-        self.y -= v * math.sin(self.theta) * dt
-        self.theta += omega * dt
-        self.rect.center = (self.x, self.y)
-
-    def apply_action(self, action):
-        self.vl = np.clip(action[0], -1, 1) * self.maxspeed
-        self.vr = np.clip(action[1], -1, 1) * self.maxspeed
-
-
-
+pygame.quit()
