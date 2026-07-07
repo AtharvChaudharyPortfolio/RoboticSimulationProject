@@ -2,7 +2,7 @@ import pygame
 from SceneRandomization import Environment
 from Renderer import Renderer
 
-env = Environment(rows=30, cols=30, start=(5,1), end=(12,25), cell_size=35)
+env = Environment(rows=40, cols=40, start=(5, 1), end=(35, 25), cell_size=25)
 renderer = Renderer(env)
 obs = env.reset()
 
