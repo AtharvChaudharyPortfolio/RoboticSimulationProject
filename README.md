@@ -1,0 +1,1 @@
+Recreation of a previous robotic navigation project, utilizing reinforcement learning to teach navigation through a randomly generated path towards an objective point. Improvements can still be made, but as of now this is a completed project.
