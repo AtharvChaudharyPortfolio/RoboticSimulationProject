@@ -16,23 +16,24 @@ class Environment:
         self.start_px = pygame.Vector2(start[0]*cell_size + cell_size/2, start[1]*cell_size + cell_size/2)
         self.end = end
         self.end_px = pygame.Vector2(end[0]*cell_size + cell_size/2, end[1]*cell_size + cell_size/2)
-        self.max_steps = 2000
+        self.max_steps = 1000
         self.steps = 0
         self.path = self.init_path(start, end, max_steps=self.max_steps)
         self.walls = self.init_walls()
         self.robot = Robot(self.start_px, 20)
         self.dt = 0.05
         self.goal = self.end_px
-        self.max_range = 250
+        self.max_range = 200
         self.prev_dist, _ = self._relative_goal(pygame.Vector2(self.robot.x, self.robot.y), self.robot.theta)
-        self.progress_scale = 1.0
-        self.step_penalty = 0.01
+        self.progress_scale = 0.05
+        self.step_penalty = 0.001
         self.proximity_penalty_scale = 0.5
-        self.collision_penalty = 50.0
-        self.goal_bonus = 100.0
-        self.timeout_penalty = 10.0
-        self.goal_radius = self.robot.w/2 * 1.5
+        self.collision_penalty = 20.0
+        self.goal_bonus = 15.0
+        self.timeout_penalty = 1.0
+        self.goal_radius = self.cell_size * 1.5
         self.collision_threshold = self.robot.w/2 * 1.1
+        self.max_dist = math.sqrt(self.width ** 2 + self.height ** 2)
 
     def init_path(self, start, end, bias=0.2, max_steps=2000, corridor_rad=1):
         carved = set()
@@ -69,8 +70,16 @@ class Environment:
     def init_walls(self):
         wall_cells = [(x, y) for x in range(self.cols) for y in range(self.rows)
                 if (x, y) not in self.path]
-        return [pygame.Rect(x * self.cell_size, y * self.cell_size, self.cell_size, self.cell_size)
+        walls = [pygame.Rect(x * self.cell_size, y * self.cell_size, self.cell_size, self.cell_size)
                 for x, y in wall_cells]
+        border_thickness = self.cell_size
+        walls += [
+            pygame.Rect(0, 0, self.width, border_thickness),  # top
+            pygame.Rect(0, self.height - border_thickness, self.width, border_thickness),  # bottom
+            pygame.Rect(0, 0, border_thickness, self.height),  # left
+            pygame.Rect(self.width - border_thickness, 0, border_thickness, self.height),  # right
+        ]
+        return walls
 
     def reset(self):
         self.path = self.init_path(self.start, self.end)
@@ -99,9 +108,9 @@ class Environment:
         to_goal = self.goal - origin
         distance = to_goal.length()
 
-        goal_angle = math.atan2(-to_goal.y, to_goal.x)  # matches your -sin convention
+        goal_angle = math.atan2(-to_goal.y, to_goal.x)
         bearing = goal_angle - theta
-        bearing = (bearing + math.pi) % (2 * math.pi) - math.pi  # normalize to [-π, π]
+        bearing = (bearing + math.pi) % (2 * math.pi) - math.pi
 
         return distance, bearing
 
@@ -109,11 +118,19 @@ class Environment:
         state = self.robot.get_state()
         origin = pygame.Vector2(state["x"], state["y"])
         goal_dist, goal_bearing = self._relative_goal(origin, state["theta"])
+
+        max_dist = math.sqrt(self.width ** 2 + self.height ** 2)
+        goal_dist_norm = goal_dist / max_dist
+        ray_dists_norm = [d / self.max_range for d in ray_dists]
+
         v = (state["vl"] + state["vr"]) / 2
         omega = (state["vr"] - state["vl"]) / self.robot.w
-        return np.array([*ray_dists, goal_dist, goal_bearing, v, omega], dtype=np.float32)
+        return np.array([*ray_dists_norm, goal_dist_norm, goal_bearing, v, omega], dtype=np.float32)
 
     def crashed(self):
+        if (self.robot.x < 0 or self.robot.x > self.width or
+                self.robot.y < 0 or self.robot.y > self.height):
+            return True
         for wall in self.walls:
             if wall.colliderect(self.robot.rect):
                 return True
@@ -136,7 +153,8 @@ class Environment:
             reward -= self.collision_penalty
             done = True
         elif new_dist < self.goal_radius:
-            reward += self.goal_bonus
+            time_bonus = (self.max_steps - self.steps) / self.max_steps * 5
+            reward += self.goal_bonus + time_bonus
             done = True
         elif self.steps >= self.max_steps:
             reward -= self.timeout_penalty

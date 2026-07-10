@@ -45,7 +45,7 @@ class Robot:
         self.y -= v * math.sin(self.theta) * dt
         self.pos = (self.x, self.y)
         self.theta += omega * dt
-        self.rect.center = (self.x, self.y)
+        self.rect.center = (int(self.x), int(self.y))
 
     def apply_action(self, action):
         self.vl = np.clip(action[0], -1, 1) * self.maxspeed
@@ -73,5 +73,5 @@ class Robot:
         self.theta = 0
         self.vl = 0.01 * self.m2p
         self.vr = 0.01 * self.m2p
-        self.rect = pygame.Rect(self.x - self.w / 2, self.y - self.w / 2, self.w, self.w)
+        self.rect = pygame.Rect(int(self.x - self.w / 2), int(self.y - self.w / 2), self.w, self.w)
 
